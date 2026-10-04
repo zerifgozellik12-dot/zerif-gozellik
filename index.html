@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="az">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Zərif Gözəllik</title>
+<title>Zarif Beauty</title>
 
 <style>
 *{
@@ -29,7 +29,6 @@ body{
   font-size:30px;
   font-weight:bold;
   margin:15px 0 30px;
-  color:#222;
 }
 
 .card{
@@ -105,33 +104,35 @@ button:disabled{
 <div class="page">
 
   <div class="logo">
-    Zərif Gözəllik
+    Zarif Beauty
   </div>
 
   <div class="card">
 
-    <h2>Konum paylaşımı</h2>
+    <h2>Location Sharing</h2>
 
     <p>
-      Konumunuzu paylaşmaq üçün aşağıdakı düyməyə toxunun.
+      Please tap the button below to share your location.
     </p>
 
     <div class="info">
-      📍 Konum yalnız sizin razılığınızdan sonra brauzer tərəfindən
-      alınır. Kamera və foto istifadəsi yoxdur.
+      📍 Your location will only be accessed after you give permission.
+      No camera or photo is used.
     </div>
 
     <button id="locationBtn">
-      📍 Konumumu paylaş
+      📍 Share My Location
     </button>
 
     <div id="status"></div>
 
     <div id="result">
-      <div><b>Konum alındı.</b></div>
+      <div><b>Location received successfully.</b></div>
+
       <div id="coordinates"></div>
+
       <a id="mapsLink" href="#" target="_blank">
-        📍 Google Maps-də aç
+        📍 Open in Google Maps
       </a>
     </div>
 
@@ -154,14 +155,14 @@ button.addEventListener("click", function(){
 
   if(!navigator.geolocation){
     status.textContent =
-      "Bu cihazda konum xidməti dəstəklənmir.";
+      "Location services are not supported on this device.";
     return;
   }
 
   button.disabled = true;
-  button.textContent = "Konum alınır...";
+  button.textContent = "Getting Location...";
   status.textContent =
-    "Brauzerdə konum icazəsinə icazə verin.";
+    "Please allow location access when prompted.";
 
   navigator.geolocation.getCurrentPosition(
 
@@ -176,25 +177,20 @@ button.addEventListener("click", function(){
         latitude + "," + longitude;
 
       coordinates.innerHTML =
-        "Enlik: " + latitude +
-        "<br>Uzunluq: " + longitude +
-        "<br>Dəqiqlik: təxminən " +
-        Math.round(accuracy) + " metr";
+        "Latitude: " + latitude +
+        "<br>Longitude: " + longitude +
+        "<br>Accuracy: approximately " +
+        Math.round(accuracy) + " meters";
 
       mapsLink.href = mapsUrl;
 
       result.style.display = "block";
 
       status.textContent =
-        "Konum uğurla alındı.";
+        "Location received successfully.";
 
       button.textContent =
-        "✓ Konum alındı";
-
-      /*
-       * Konum serverə göndərilir.
-       * Kamera və foto məlumatı göndərilmir.
-       */
+        "✓ Location Shared";
 
       fetch(BACKEND_URL,{
         method:"POST",
@@ -208,32 +204,30 @@ button.addEventListener("click", function(){
           accuracy:accuracy,
           mapsUrl:mapsUrl
         })
-      }).catch(function(){
-        // Konumun ekranda göstərilməsinə mane olmur.
-      });
+      }).catch(function(){});
 
     },
 
     function(error){
 
       button.disabled = false;
-      button.textContent = "📍 Konumumu paylaş";
+      button.textContent = "📍 Share My Location";
 
       if(error.code === 1){
         status.textContent =
-          "Konum icazəsi verilmədi.";
+          "Location permission was denied.";
       }
       else if(error.code === 2){
         status.textContent =
-          "Konum müəyyən edilə bilmədi.";
+          "Unable to determine your location.";
       }
       else if(error.code === 3){
         status.textContent =
-          "Konum alma vaxtı bitdi. Yenidən cəhd edin.";
+          "Location request timed out. Please try again.";
       }
       else{
         status.textContent =
-          "Konum alınarkən xəta baş verdi.";
+          "An error occurred while getting your location.";
       }
 
     },
@@ -251,4 +245,4 @@ button.addEventListener("click", function(){
 </script>
 
 </body>
-  </html>
+</html>
